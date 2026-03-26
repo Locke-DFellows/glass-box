@@ -94,8 +94,10 @@
   @apply text-xs opacity-0 transition-opacity whitespace-nowrap;
 }
 
-/* Show label text on button hover */
-.Toolbar_Button_1:hover .Toolbar_Button_Label_1 {
+/* Show label text on button hover or keyboard focus */
+.Toolbar_Button_1:hover .Toolbar_Button_Label_1,
+.Toolbar_Button_1:focus-within .Toolbar_Button_Label_1,
+.Toolbar_Button_1:focus-visible .Toolbar_Button_Label_1 {
   @apply opacity-100;
 }
 
