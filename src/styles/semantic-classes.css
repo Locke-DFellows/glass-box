@@ -83,7 +83,7 @@
 }
 
 .Toolbar_Button_1 {
-  @apply p-2 hover:bg-slate-100 rounded-lg shadow-sm transition-colors text-slate-600 hover:text-slate-900 flex flex-col items-center gap-1 group;
+  @apply p-2 hover:bg-slate-100 rounded-lg shadow-sm transition-colors text-slate-600 hover:text-slate-900 flex flex-col items-center gap-1;
 }
 
 .Toolbar_Button_Icon_1 {
@@ -91,7 +91,12 @@
 }
 
 .Toolbar_Button_Label_1 {
-  @apply text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap;
+  @apply text-xs opacity-0 transition-opacity whitespace-nowrap;
+}
+
+/* Show label text on button hover */
+.Toolbar_Button_1:hover .Toolbar_Button_Label_1 {
+  @apply opacity-100;
 }
 
 .Toolbar_HintText_1 {
