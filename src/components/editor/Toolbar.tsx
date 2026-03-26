@@ -155,6 +155,7 @@ export default function Toolbar() {
         {/* FORMAT TAB: Text styling (bold, italic, underline, colors) */}
         {activeTab === 'format' && (
           <>
+            {/* Quick formatting buttons */}
             <div className="Toolbar_ToolGroup_Section_1 Toolbar_ToolGroup_Divider_1">
               <ToolbarButton
                 icon={Bold}
@@ -176,20 +177,38 @@ export default function Toolbar() {
               />
             </div>
 
-            {/* Heading options */}
-            <div className="Toolbar_ToolGroup_Section_1 Toolbar_ToolGroup_Divider_1">
-              <ToolbarButton
-                icon={Heading1}
-                label="H1"
-                onClick={() => applyFormatting('formatBlock', '<h1>')}
-                title="Format as Heading 1"
-              />
-              <ToolbarButton
-                icon={Heading2}
-                label="H2"
-                onClick={() => applyFormatting('formatBlock', '<h2>')}
-                title="Format as Heading 2"
-              />
+            {/* Style and Font Selectors */}
+            <div className="Toolbar_Format_Container_1">
+              {/* 1. Style Selector (Headings) */}
+              <div className="Toolbar_StyleSelector_Group_1">
+                <label className="Toolbar_StyleSelector_Label_1">Style</label>
+                <select
+                  className="Toolbar_StyleSelector_Select_1"
+                  onChange={(e) => applyFormatting('formatBlock', e.target.value)}
+                >
+                  <option value="p">Paragraph</option>
+                  <option value="h1">Heading 1</option>
+                  <option value="h2">Heading 2</option>
+                  <option value="h3">Heading 3</option>
+                  <option value="h4">Heading 4</option>
+                  <option value="h5">Heading 5</option>
+                  <option value="h6">Heading 6</option>
+                </select>
+              </div>
+
+              {/* 2. Font Family Dropdown */}
+              <div className="Toolbar_FontFamily_Group_1">
+                <label className="Toolbar_FontFamily_Label_1">Font</label>
+                <select
+                  className="Toolbar_FontFamily_Select_1"
+                  onChange={(e) => applyFormatting('fontName', e.target.value)}
+                >
+                  <option value="Inter">Inter (Sans)</option>
+                  <option value="Georgia">Georgia (Serif)</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <option value="Courier New">Monospace</option>
+                </select>
+              </div>
             </div>
 
             {/* Paragraph styles */}
