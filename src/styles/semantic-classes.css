@@ -148,15 +148,15 @@
 }
 
 .ErrorScreen_Title_1 {
-  @apply text-2xl font-bold text-gray-900 mb-2;
+  @apply text-2xl font-bold text-slate-900 mb-2;
 }
 
 .ErrorScreen_Message_1 {
-  @apply text-gray-600;
+  @apply text-slate-600;
 }
 
 .ErrorScreen_Details_1 {
-  @apply text-sm text-gray-500 mt-4;
+  @apply text-sm text-slate-500 mt-4;
 }
 
 /* ============================================================================
