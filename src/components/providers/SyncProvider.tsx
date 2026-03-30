@@ -38,7 +38,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useEditorStore } from '@/store/useEditorStore';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 /**
  * SyncProvider: Watches editor state and syncs to Supabase
@@ -105,7 +105,16 @@ export function SyncProvider({
         return;
       }
 
-      // 2. SAFETY: Check if a sync is already in progress
+      // 2. CONFIGURATION CHECK: Verify Supabase is configured
+      // If not, log warning but don't crash (graceful fallback)
+      if (!isSupabaseConfigured) {
+        console.warn(
+          '[Sync] ⚠️  Supabase not configured. Check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local'
+        );
+        return;
+      }
+
+      // 3. SAFETY: Check if a sync is already in progress
       // If so, skip this cycle (the previous sync will catch the latest changes)
       if (isSyncing.current) {
         console.log(
@@ -114,13 +123,13 @@ export function SyncProvider({
         return;
       }
 
-      // 3. SET THE TRAFFIC LIGHT: Mark that we're syncing
+      // 4. SET THE TRAFFIC LIGHT: Mark that we're syncing
       isSyncing.current = true;
 
       try {
         console.log('[Sync] Sending document state to Supabase...');
 
-        // 4. THE UPSERT: Send blocks array to Supabase
+        // 5. THE UPSERT: Send blocks array to Supabase
         // 
         // Choice: "update" not "insert"
         // - update: Overwrites the current state (we want the "latest" version)
@@ -142,14 +151,14 @@ export function SyncProvider({
           })
           .eq('id', docId);
 
-        // 5. ERROR HANDLING
+        // 6. ERROR HANDLING
         if (error) {
           // Log the error but don't crash; let the next sync try again
           console.error('[Sync] Supabase update failed:', error.message);
           return; // Exit early; don't update lastSyncedContent
         }
 
-        // 6. SUCCESS: Update our "last known good" reference
+        // 7. SUCCESS: Update our "last known good" reference
         lastSyncedContent.current = currentContent;
 
         console.log(
@@ -165,7 +174,7 @@ export function SyncProvider({
       }
     };
 
-    // 8. THE HEARTBEAT: Run sync every 10 seconds
+    // 8. THE HEARTBEAT: Run sync every 10 seconds (batches updates from debounced input)
     // 
     // Why 10 seconds?
     // - Fast enough to feel real-time (student sees "saved" quickly)

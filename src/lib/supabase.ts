@@ -23,15 +23,29 @@ import { createClient } from '@supabase/supabase-js';
 /**
  * Supabase URL and Anon Key from environment
  * 
- * Non-null assertion (!) means:
- * - If these env vars don't exist, TypeScript type error at build time
- * - If they exist but are undefined, runtime error on createClient()
+ * Graceful Fallback Pattern (inspired by lumina-editor):
+ * - If env vars are missing, use placeholder values instead of crashing
+ * - This allows the app to render with a clear error message
+ * - Better UX than a blank white screen or cryptic TypeScript error
+ * - Prevents build-time failures that block developers
  * 
- * This "fail fast" approach is better than failing silently with undefined values
- * that cause cryptic errors later in the sync process.
+ * The app will still function UI-wise, but sync operations will fail gracefully.
+ * This helps during development/setup when credentials aren't configured yet.
+ * 
+ * Security Note: Placeholders are intentionally invalid; Supabase will reject all
+ * requests, which is the correct behavior. Never use fake credentials in production.
  */
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder_key_missing';
+
+/**
+ * Flag to detect if Supabase is properly configured
+ * 
+ * Used to display warning messages when credentials are missing.
+ * Allows graceful degradation instead of hard failures.
+ */
+export const isSupabaseConfigured = 
+  Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
 /**
  * Singleton Supabase client instance
@@ -42,5 +56,8 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
  * - Subscribe to real-time updates (if implemented)
  * 
  * All database operations must respect RLS policies that check user_id
+ * 
+ * If isSupabaseConfigured is false, sync operations will fail gracefully.
+ * Check isSupabaseConfigured before assuming sync will succeed.
  */
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
